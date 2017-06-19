@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CBABAD6F-91D6-475A-B68F-01E51401412B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Builder</RootNamespace>
+    <AssemblyName>Builder</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Windows7SlideshowWallpaperUtil\Windows7SlideshowWallpaperUtil.csproj">
+      <Project>{1e71f78f-d496-4d9f-afa7-c0e3b25351eb}</Project>
+      <Name>Windows7SlideshowWallpaperUtil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Windows8SlideshowWallpaperUtil\Windows8SlideshowWallpaperUtil.csproj">
+      <Project>{cb97eed5-8426-4312-92a3-b08b29b0a1ea}</Project>
+      <Name>Windows8SlideshowWallpaperUtil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WindowsSlideshowWallpaperForms\WindowsSlideshowWallpaperUtilForms.csproj">
+      <Project>{e8cdd257-c6da-4fe9-bd49-7cfcece0fcc4}</Project>
+      <Name>WindowsSlideshowWallpaperUtilForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WindowsSlideshowWallpaperUtilWPF\WindowsSlideshowWallpaperUtilWPF.csproj">
+      <Project>{1e6e0683-3e5c-4a6c-bd37-5532364eeb51}</Project>
+      <Name>WindowsSlideshowWallpaperUtilWPF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WindowsSlideshowWallpaperUtil\WindowsSlideshowWallpaperUtil.csproj">
+      <Project>{bf1ac1d3-fd53-49a9-b595-de4b5a7bd3ae}</Project>
+      <Name>WindowsSlideshowWallpaperUtil</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
