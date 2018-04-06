@@ -324,6 +324,10 @@ namespace WindowsSlideshowWallpaperUtilWPF {
                     case Key.Enter:
                         btnOpen.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                         break;
+                    case Key.Escape:
+                        Panel.SetZIndex(popup, 1);
+                        DisplayedImage = null;
+                        break;
                     default:
                         break;
                 }
