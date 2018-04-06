@@ -24,12 +24,25 @@ namespace WindowsSlideshowWallpaperUtilWPF {
         private WindowsSlideshowWallpaperUtil.Wallpaper wallpaper;
         bool active, exist, favorited;
 
+        public static readonly RoutedEvent imageClickedEvent = EventManager.RegisterRoutedEvent("imageClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WallpaperControl));
+
+        public event RoutedEventHandler ImageClicked
+        {
+            add { AddHandler(imageClickedEvent, value); }
+            remove { RemoveHandler(imageClickedEvent, value); }
+        }
+
+        public Wallpaper Wallpaper
+        {
+            get { return wallpaper; }
+        }
+
         public WallpaperControl(WindowsSlideshowWallpaperUtil.Wallpaper wallpaper) {
             // TODO: Complete member initialization
             this.wallpaper = wallpaper;
             InitializeComponent();
             WallpaperImage.Source = Convert(wallpaper.Thumbnail);
-            lblName.Text = wallpaper.Path;
+            btnOpen.Content = wallpaper.Path;
             lblDimensions.Text = wallpaper.Dimensions;
             lblSize.Text = wallpaper.Filesize;
             check();
@@ -51,7 +64,7 @@ namespace WindowsSlideshowWallpaperUtilWPF {
             btnFav.Visibility = (!favorited && btnFav.IsEnabled) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
             btnDelete.Visibility = (btnDelete.IsEnabled) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
             btnFolder.Visibility = (btnFolder.IsEnabled) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
-            lblName.Visibility = System.Windows.Visibility.Visible;
+            btnOpen.Visibility = System.Windows.Visibility.Visible;
             btnYes.Visibility = System.Windows.Visibility.Hidden;
             btnNo.Visibility = System.Windows.Visibility.Hidden;
         }
@@ -64,6 +77,7 @@ namespace WindowsSlideshowWallpaperUtilWPF {
             btnFav.Visibility = System.Windows.Visibility.Hidden;
             btnYes.Visibility = System.Windows.Visibility.Hidden;
             btnNo.Visibility = System.Windows.Visibility.Hidden;
+            btnOpen.Visibility = System.Windows.Visibility.Hidden;
         }
 
         public BitmapImage Convert(System.Drawing.Image image) {
@@ -83,9 +97,12 @@ namespace WindowsSlideshowWallpaperUtilWPF {
         private void WallpaperImage_MouseDown_1(object sender, MouseButtonEventArgs e) {
             if(e.ClickCount == 2 && e.LeftButton == MouseButtonState.Pressed) {
                 if(wallpaper.Exists) {
-                    System.Diagnostics.Process.Start(wallpaper.Path);
+                    RoutedEventArgs newEventArgs = new RoutedEventArgs(imageClickedEvent);
+                    RaiseEvent(newEventArgs);
+                    //System.Diagnostics.Process.Start(wallpaper.Path);
                 }
             }
+            e.Handled = true;
         }
 
         private void check() {
@@ -109,6 +126,14 @@ namespace WindowsSlideshowWallpaperUtilWPF {
         private void btnFolder_Click(object sender, RoutedEventArgs e) {
             if(wallpaper.Exists) {
                 ShowSelectedInExplorer.FileOrFolder(wallpaper.Path);
+            }
+        }
+
+        private void btnOpen_Click(object sender, RoutedEventArgs e)
+        {
+            if (wallpaper.Exists)
+            {
+                System.Diagnostics.Process.Start(wallpaper.Path);
             }
         }
 

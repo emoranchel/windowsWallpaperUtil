@@ -44,7 +44,7 @@ namespace WindowsSlideshowWallpaperUtilWPF {
             toolStripMenuItem2.Click += toolStripMenuItem2_Click;
             toolStripMenuItem3.Click += toolStripMenuItem3_Click;
             notifyIcon1.DoubleClick += notifyIcon1_Click;
-            //showWindow();
+            showWindow();
         }
 
         void toolStripMenuItem3_Click(object sender, EventArgs e) {
@@ -94,6 +94,7 @@ namespace WindowsSlideshowWallpaperUtilWPF {
 
         private void Application_DispatcherUnhandledException_1(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e) {
             notifyIcon1.ShowBalloonTip(4000, "Error!", "Bad Joo Joo hapened:\n"+e.Exception.Message+"\nChill we got this!", ToolTipIcon.Info);
+            e.Handled = true;
         }
 
         private void InitializeFormComponent() {

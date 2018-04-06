@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -48,6 +51,7 @@ namespace WindowsSlideshowWallpaperUtilWPF {
                             control.MouseLeave += control_MouseLeave;
                             wrapPanel.Children.Insert(0, control);
                             views.Add(wallpaper.Path, control);
+                            control.ImageClicked += Control_ImageClicked;
                         });
                     } else {
                         Dispatcher.Invoke(() => {
@@ -59,6 +63,7 @@ namespace WindowsSlideshowWallpaperUtilWPF {
             }).Start();
             updateThumbButton();
         }
+
 
         void control_MouseLeave(object sender, MouseEventArgs e) {
             if(sender is WallpaperControl) {
@@ -123,5 +128,207 @@ namespace WindowsSlideshowWallpaperUtilWPF {
                 ThumbButton.Content = "Unused Thumbnails are not Deleted";
             }
         }
+
+        private WallpaperControl _displayedImage = null;
+
+        private WallpaperControl DisplayedImage
+        {
+            get{ return _displayedImage; }
+            set
+            {
+                if (value != null) {
+                    Wallpaper wallpaper = value.Wallpaper;
+                    BitmapImage img = new BitmapImage();
+                    img.BeginInit();
+                    img.UriSource = new Uri(wallpaper.Path);
+                    img.CacheOption = BitmapCacheOption.OnLoad;
+                    img.EndInit();
+                    image.Source = img;
+                    lblImageInfo.Content = wallpaper.Dimensions +" "+ wallpaper.Filesize;
+                    lblImagePath.Content = wallpaper.Path;
+                    refreshVisibility(wallpaper);
+
+                }
+                else
+                {
+                    image.Source = null;
+                }
+                _displayedImage = value;
+            }
+        }
+
+        private void refreshVisibility(Wallpaper wallpaper)
+        {
+            btnFav.Visibility = !wallpaper.Favorited && wallpaper.Exists ? Visibility.Visible : Visibility.Hidden;
+            lblFav.Visibility = wallpaper.Favorited ? Visibility.Visible : Visibility.Hidden;
+
+            lblDeleted.Visibility= !wallpaper.Exists? Visibility.Visible : Visibility.Hidden;
+            btnDelete.Visibility= wallpaper.Exists ? Visibility.Visible : Visibility.Hidden;
+            lblConfirmDelete.Visibility = Visibility.Hidden;
+            btnNo.Visibility = Visibility.Hidden;
+            btnYes.Visibility = Visibility.Hidden;
+
+            btnOpen.Visibility= wallpaper.Exists ? Visibility.Visible : Visibility.Hidden;
+            btnFolder.Visibility = wallpaper.Exists ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        private void Control_ImageClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is WallpaperControl)
+            {
+                WallpaperControl control = sender as WallpaperControl;
+                // Winforms Image we want to get the WPF Image from...
+                control.hideOptions();
+                Panel.SetZIndex(popup, 3);
+                DisplayedImage = control;
+                e.Handled = true;
+            }
+        }
+
+        private void popup_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Panel.SetZIndex(popup, 1);
+            e.Handled = true;
+            DisplayedImage = null;
+        }
+
+        private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            int delta = e.Delta > 0 ? -1 : 1;
+            ShowPic(delta);
+        }
+
+        private void ShowPic(int delta)
+        {
+            if (DisplayedImage != null)
+            {
+                int index = wrapPanel.Children.IndexOf(DisplayedImage);
+                WallpaperControl c = null;
+                bool looped = false;
+                do
+                {
+                    index += delta;
+
+                    if (index < 0)
+                    {
+                        if (looped) { return; }
+                        index = wrapPanel.Children.Count - 1;
+                        looped = true;
+                    }
+                    if (index >= wrapPanel.Children.Count)
+                    {
+                        if (looped) { return; }
+                        index = 0;
+                        looped = true;
+                    }
+                    WallpaperControl c1 = (WallpaperControl)wrapPanel.Children[index];
+                    if (c1.Wallpaper.Exists)
+                    {
+                        c = c1;
+                    }
+                } while (c == null);
+                DisplayedImage = c;
+            }
+        }
+
+
+        private void nextButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ShowPic(1);
+            e.Handled = true;
+        }
+        private void prevButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ShowPic(-1);
+            e.Handled = true;
+        }
+
+        private void btnFav_Click(object sender, RoutedEventArgs e)
+        {
+            if (DisplayedImage != null)
+            {
+                DisplayedImage.btnFav.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                refreshVisibility(DisplayedImage.Wallpaper);
+            }
+        }
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (DisplayedImage != null && DisplayedImage.Wallpaper.Exists)
+            {
+                lblConfirmDelete.Visibility = Visibility.Visible;
+                btnDelete.Visibility = Visibility.Hidden;
+                btnYes.Visibility = Visibility.Visible;
+                btnNo.Visibility = Visibility.Visible;
+            }
+
+        }
+
+        private void btnNo_Click(object sender, RoutedEventArgs e)
+        {
+            if (DisplayedImage != null)
+            {
+                refreshVisibility(DisplayedImage.Wallpaper);
+            }
+        }
+
+        private void btnYes_Click(object sender, RoutedEventArgs e)
+        {
+            if (DisplayedImage != null)
+            {
+                DisplayedImage.btnYes.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                refreshVisibility(DisplayedImage.Wallpaper);
+            }
+
+        }
+
+        private void btnOpen_Click(object sender, RoutedEventArgs e)
+        {
+            if (DisplayedImage != null)
+            {
+                DisplayedImage.btnOpen.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                refreshVisibility(DisplayedImage.Wallpaper);
+            }
+        }
+
+        private void btnFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (DisplayedImage != null)
+            {
+                DisplayedImage.btnFolder.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                refreshVisibility(DisplayedImage.Wallpaper);
+            }
+
+        }
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (DisplayedImage != null)
+            {
+                switch (e.Key)
+                {
+                    case Key.Left:
+                        ShowPic(-1);
+                        break;
+                    case Key.Right:
+                        ShowPic(1);
+                        break;
+                    case Key.Delete:
+                        if (btnDelete.Visibility == Visibility.Visible) { 
+                        btnDelete.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                        }else if(btnYes.Visibility == Visibility.Visible)
+                        {
+                            btnYes.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                        }
+                        break;
+                    case Key.Enter:
+                        btnOpen.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
     }
 }

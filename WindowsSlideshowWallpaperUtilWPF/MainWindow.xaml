@@ -1,40 +1,133 @@
 ﻿<Window x:Class="WindowsSlideshowWallpaperUtilWPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="552" Width="701" Closing="closing" Icon="Live TV.ico">
+        Title="MainWindow" Height="539.558" Width="867.279" Closing="closing" Icon="Live TV.ico"
+        Mouse.MouseWheel="Window_MouseWheel"
+        KeyDown="Window_KeyUp">
     <Window.Resources>
-        <Style x:Key="EmptyButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Width" Value="48"/>
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="Background" Value="Transparent"/>
+        <Style x:Key="previewButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#3FACACAC"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <ContentPresenter 
-                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                        Margin="{TemplateBinding Padding}" 
-                        RecognizesAccessKey="True" 
-                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BitmapEffect">
-                        <Setter.Value>
-                            <DropShadowBitmapEffect Color="#FFCFEDFF" Softness="0.10" ShadowDepth="3"/>
-                        </Setter.Value>
-                    </Setter>
+                    <Setter Property="Background" Value="#CCFFFFFF"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <ControlTemplate x:Key="ButtonBaseControlTemplate1" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="True">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" TargetName="border" Value="#66FFFFFF"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF3C7FB1"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" TargetName="border" Value="#66FFFFFF"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF2C628B"/>
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                    <Setter Property="Background" TargetName="border" Value="#66FFFFFF"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" TargetName="border" Value="#FFF4F4F4"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FFADB2B5"/>
+                    <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="#FF838383"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
     </Window.Resources>
 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
 
-    <DockPanel LastChildFill="True">
-        <Grid Height="96" DockPanel.Dock="Bottom" Visibility="Collapsed" x:Name="optionPanel">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Background="White" Visibility="Visible" Grid.Row="0" Panel.ZIndex="2">
+            <WrapPanel x:Name="wrapPanel">
+                <WrapPanel.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF747474" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </WrapPanel.Background>
+            </WrapPanel>
+        </ScrollViewer>
+
+        <Grid Background="#BF000000" Panel.ZIndex="19" x:Name="popup" Mouse.MouseDown="popup_MouseDown">
+            <Image x:Name="image" Canvas.Left="0" Canvas.Top="0" Canvas.Right="0" Canvas.Bottom="0" Width="auto" Height="auto" Stretch="Uniform" Panel.ZIndex="1"/>
+            <Grid Panel.ZIndex="2" Height="auto" Width="auto" Margin="10,10,10,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="prevButton" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="2" Height="auto" Width="auto" PreviewMouseDown="prevButton_MouseDown" Style="{DynamicResource previewButtonStyle}" Template="{DynamicResource ButtonBaseControlTemplate1}">
+                </Button>
+                <Button x:Name="nextButton" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="2" Grid.Row="2" Height="auto" Width="auto" PreviewMouseDown="nextButton_MouseDown" Style="{DynamicResource previewButtonStyle}" Template="{DynamicResource ButtonBaseControlTemplate1}">
+                </Button>
+                <Label Grid.Column="1" Grid.Row="0" x:Name="lblImagePath" HorizontalAlignment="Stretch" Height="Auto" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="Auto" Background="#BFD6D6D6"/>
+                <Label Grid.Column="1" Grid.Row="1" x:Name="lblImageInfo" HorizontalAlignment="Stretch" Height="Auto" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="Auto" Background="#7F858585"/>
+                <Grid Grid.Column="1" Grid.Row="3" Height="auto" Width="auto" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="100*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" x:Name="btnFav" Click="btnFav_Click" Style="{DynamicResource previewButtonStyle}" Template="{DynamicResource ButtonBaseControlTemplate1}">
+                        <Image Source="Resources\black\favs.png"/>
+                    </Button>
+                    <Label Grid.Column="0" Content="Favorite" FontSize="20" FontWeight="Bold" x:Name="lblFav">
+                        <Label.BitmapEffect>
+                            <DropShadowBitmapEffect Color="White" Softness="0" ShadowDepth="2"/>
+                        </Label.BitmapEffect>
+                    </Label>
+                    <Button Grid.Column="1" x:Name="btnDelete" Click="btnDelete_Click" Style="{DynamicResource previewButtonStyle}" Template="{DynamicResource ButtonBaseControlTemplate1}">
+                        <Image Source="Resources\black\delete.png"/>
+                    </Button>
+                    <Label Grid.Column="1" Content="File Deleted" FontSize="20" FontWeight="Bold" x:Name="lblDeleted">
+                        <Label.BitmapEffect>
+                            <DropShadowBitmapEffect Color="White" Softness="0" ShadowDepth="2"/>
+                        </Label.BitmapEffect>
+                    </Label>
+                    <Label Grid.Column="1" Content="Delete?" FontSize="20" FontWeight="Bold" x:Name="lblConfirmDelete">
+                        <Label.BitmapEffect>
+                            <DropShadowBitmapEffect Color="White" Softness="0" ShadowDepth="2"/>
+                        </Label.BitmapEffect>
+                    </Label>
+                    <Button Grid.Column="2" x:Name="btnNo" Click="btnNo_Click" Style="{DynamicResource previewButtonStyle}" Template="{DynamicResource ButtonBaseControlTemplate1}">
+                        <Image Source="Resources\black\cancel.png"/>
+                    </Button>
+                    <Button Grid.Column="3" x:Name="btnYes" Click="btnYes_Click" Style="{DynamicResource previewButtonStyle}" Template="{DynamicResource ButtonBaseControlTemplate1}">
+                        <Image Source="Resources\black\check.png"/>
+                    </Button>
+                    <Button Grid.Column="4" x:Name="btnOpen" Click="btnOpen_Click" Style="{DynamicResource previewButtonStyle}" Template="{DynamicResource ButtonBaseControlTemplate1}">
+                        <Image Source="Resources\black\search.png"/>
+                    </Button>
+                    <Button Grid.Column="5" x:Name="btnFolder" Click="btnFolder_Click" Style="{DynamicResource previewButtonStyle}" Template="{DynamicResource ButtonBaseControlTemplate1}">
+                        <Image Source="Resources\black\folder.png"/>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Grid Height="96"  Visibility="Collapsed" x:Name="optionPanel" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="48*"/>
                 <RowDefinition Height="48*"/>
@@ -47,20 +140,11 @@
             <Button Grid.Row="2" Grid.Column="0" FontFamily="Segoe UI" FontSize="25" Content="Delete Unused Thumbnails" Click="Button_Click" x:Name="ThumbButton">
             </Button>
         </Grid>
-        <Canvas Height="48" DockPanel.Dock="Bottom">
+        <Canvas Height="48" Grid.Row="2">
             <Button Style="{DynamicResource EmptyButtonStyle}" Click="Button_Click_1" Canvas.Right="0">
                 <Image Source="Resources\black\parent.png"/>
             </Button>
         </Canvas>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Background="White">
-            <WrapPanel x:Name="wrapPanel">
-                <WrapPanel.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF747474" Offset="0"/>
-                        <GradientStop Color="White" Offset="1"/>
-                    </LinearGradientBrush>
-                </WrapPanel.Background>
-            </WrapPanel>
-        </ScrollViewer>
-    </DockPanel>
+
+    </Grid>
 </Window>
