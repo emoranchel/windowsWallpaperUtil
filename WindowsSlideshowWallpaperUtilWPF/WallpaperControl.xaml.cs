@@ -160,5 +160,15 @@ namespace WindowsSlideshowWallpaperUtilWPF {
             check();
 
         }
+
+        internal void nohighlight()
+        {
+            highBorder.Visibility = Visibility.Hidden;
+        }
+
+        internal void highlight()
+        {
+            highBorder.Visibility = Visibility.Visible;
+        }
     }
 }

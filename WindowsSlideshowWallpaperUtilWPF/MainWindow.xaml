@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="539.558" Width="867.279" Closing="closing" Icon="Live TV.ico"
         Mouse.MouseWheel="Window_MouseWheel"
-        KeyDown="Window_KeyUp">
+        PreviewKeyDown="Window_KeyUp"
+        PreviewMouseDown="Control_PreviewMouseDown">
     <Window.Resources>
         <Style x:Key="previewButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="#3FACACAC"/>
@@ -50,7 +51,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Background="White" Visibility="Visible" Grid.Row="0" Panel.ZIndex="2">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Background="White" Visibility="Visible" Grid.Row="0" Panel.ZIndex="2" x:Name="scrollViewer">
             <WrapPanel x:Name="wrapPanel">
                 <WrapPanel.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

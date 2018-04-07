@@ -89,5 +89,6 @@
                 <SolidColorBrush Color="#D3CCCC" Opacity="0.3"/>
             </TextBlock.Background>
         </TextBlock>
+        <Rectangle HorizontalAlignment="Left" Height="181" Stroke="#FF334EC7" VerticalAlignment="Top" Width="296" Canvas.Left="2" Canvas.Top="2" StrokeThickness="3" Visibility="Hidden" x:Name="highBorder"/>
     </Canvas>
 </UserControl>

@@ -52,6 +52,7 @@ namespace WindowsSlideshowWallpaperUtilWPF {
                             wrapPanel.Children.Insert(0, control);
                             views.Add(wallpaper.Path, control);
                             control.ImageClicked += Control_ImageClicked;
+                            control.PreviewMouseDown += Control_PreviewMouseDown;
                         });
                     } else {
                         Dispatcher.Invoke(() => {
@@ -89,7 +90,12 @@ namespace WindowsSlideshowWallpaperUtilWPF {
         private void wallpaperRemoved(object sender, Wallpaper wallpaper) {
             if(views.ContainsKey(wallpaper.Path)) {
                 Dispatcher.Invoke(() => {
-                    wrapPanel.Children.Remove(views[wallpaper.Path]);
+                    WallpaperControl c = views[wallpaper.Path];
+                    if (highlightedControl == c)
+                    {
+                        highlight(null);
+                    }
+                    wrapPanel.Children.Remove(c);
                     views.Remove(wallpaper.Path);
                 });
             }
@@ -129,6 +135,10 @@ namespace WindowsSlideshowWallpaperUtilWPF {
             }
         }
 
+
+
+
+        private WallpaperControl highlightedControl = null;
         private WallpaperControl _displayedImage = null;
 
         private WallpaperControl DisplayedImage
@@ -314,9 +324,11 @@ namespace WindowsSlideshowWallpaperUtilWPF {
                         ShowPic(1);
                         break;
                     case Key.Delete:
-                        if (btnDelete.Visibility == Visibility.Visible) { 
-                        btnDelete.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                        }else if(btnYes.Visibility == Visibility.Visible)
+                        if (btnDelete.Visibility == Visibility.Visible)
+                        {
+                            btnDelete.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                        }
+                        else if (btnYes.Visibility == Visibility.Visible)
                         {
                             btnYes.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                         }
@@ -328,10 +340,115 @@ namespace WindowsSlideshowWallpaperUtilWPF {
                         Panel.SetZIndex(popup, 1);
                         DisplayedImage = null;
                         break;
+                    case Key.F:
+                    case Key.Home:
+                        btnFav.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                        break;
                     default:
                         break;
                 }
             }
+            else 
+            {
+                switch (e.Key)
+                {
+                    case Key.Left:
+                        select(-1);
+                        scrollToSelected();
+                        break;
+                    case Key.Right:
+                        select(1);
+                        scrollToSelected();
+                        break;
+                    case Key.Escape:
+                        highlight(null);
+                        break;
+                    case Key.Enter:
+                        if (highlightedControl != null && highlightedControl.Wallpaper.Exists){
+                            Panel.SetZIndex(popup, 3);
+                            DisplayedImage = highlightedControl;
+                            e.Handled = true;
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void scrollToSelected()
+        {
+            highlightedControl.Focus();
+            Point point = highlightedControl.TranslatePoint(new Point(), wrapPanel);
+            if (!(point.Y > scrollViewer.VerticalOffset && point.Y + highlightedControl.Height < scrollViewer.VerticalOffset + scrollViewer.ViewportHeight))
+            {
+                scrollViewer.ScrollToVerticalOffset(point.Y);
+            }
+            
+        }
+
+        private void select(int delta)
+        {
+            WallpaperControl c = null;
+            if (highlightedControl == null)
+            {
+                highlight((WallpaperControl)wrapPanel.Children[0]);
+                if (highlightedControl!=null)
+                {
+                    return;
+                }
+            }
+            int index = wrapPanel.Children.IndexOf(highlightedControl);
+
+            bool looped = false;
+            do
+            {
+                index += delta;
+
+                if (index < 0)
+                {
+                    if (looped) { return; }
+                    index = wrapPanel.Children.Count - 1;
+                    looped = true;
+                }
+                if (index >= wrapPanel.Children.Count)
+                {
+                    if (looped) { return; }
+                    index = 0;
+                    looped = true;
+                }
+                WallpaperControl c1 = (WallpaperControl)wrapPanel.Children[index];
+                if (c1.Wallpaper.Exists)
+                {
+                    c = c1;
+                }
+            } while (c == null);
+            highlight(c);
+        }
+
+        private void highlight(WallpaperControl c)
+        {
+            if (highlightedControl != null)
+            {
+                highlightedControl.nohighlight();
+            }
+            if (c != null)
+            {
+                c.highlight();
+            }
+            highlightedControl = c;
+        }
+
+        private void Control_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is WallpaperControl)
+            {
+                WallpaperControl control = sender as WallpaperControl;
+                highlight(control);
+            }
+            else
+            {
+                highlight(null);
+            }
+
         }
 
     }
