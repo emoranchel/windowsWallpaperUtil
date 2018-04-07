@@ -17,7 +17,7 @@ namespace WindowsSlideshowWallpaperUtilForms {
             InitializeComponent();
         }
 
-        private Wallpaper wallpaper;
+        public Wallpaper wallpaper;
         internal WallpaperView(Wallpaper wallpaper) {
             this.wallpaper = wallpaper;
             InitializeComponent();
@@ -57,7 +57,6 @@ namespace WindowsSlideshowWallpaperUtilForms {
 
         public void showOptions() {
             active = true;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
             bool favorited = wallpaper.Favorited;
             button1.Visible = !favorited && button1.Enabled;
             button2.Visible = true && button2.Enabled;
@@ -72,7 +71,6 @@ namespace WindowsSlideshowWallpaperUtilForms {
 
         public void hideOptions() {
             active = false;
-            this.BackColor = Color.Transparent;
             label2.Visible = false;
             label4.Visible = false;
             button1.Visible = false;
@@ -83,12 +81,6 @@ namespace WindowsSlideshowWallpaperUtilForms {
             label1.Visible = false;
             lblSize.Visible = false;
             lblDimensions.Visible = false;
-        }
-
-        private void WallpaperView_DoubleClick(object sender, EventArgs e) {
-            if(wallpaper.Exists) {
-                System.Diagnostics.Process.Start(wallpaper.Path);
-            }
         }
 
         private void button1_Click(object sender, EventArgs e) {
@@ -137,6 +129,24 @@ namespace WindowsSlideshowWallpaperUtilForms {
             Check();
             if(active) { showOptions(); }
         }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+            if (wallpaper.Exists)
+            {
+                System.Diagnostics.Process.Start(wallpaper.Path);
+            }
+        }
+
+        public void select()
+        {
+            this.BackColor = Color.DimGray;
+        }
+        public void deselect()
+        {
+            this.BackColor = Color.DarkGray;
+        }
+
     }
     class HoverImages {
         public static readonly HoverImages Instance = new HoverImages();

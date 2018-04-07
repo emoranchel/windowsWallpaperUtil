@@ -99,6 +99,8 @@ namespace WindowsSlideshowWallpaperUtilForms {
                     WallpaperView wallpaperView = new WallpaperView(wallpaper);
                     views.Add(wallpaper.Path, wallpaperView);
                     wallpaperView.MouseEnter += wallpaperView_MouseEnter;
+                    wallpaperView.MouseClick += WallpaperView_MouseClick;
+                    wallpaperView.MouseDoubleClick += WallpaperView_MouseDoubleClick;
                     addPanel(wallpaperView);
                 } else {
                     addPanel(views[wallpaper.Path]);
@@ -108,6 +110,54 @@ namespace WindowsSlideshowWallpaperUtilForms {
                 }
                 wallpaper = queue.Take();
             }
+        }
+
+        private void WallpaperView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ShowView((WallpaperView)sender);
+        }
+
+        private WallpaperView displayedView = null;
+
+        private void ShowView(WallpaperView view)
+        {
+            if(view == null || !view.wallpaper.Exists)
+            {
+                viewer.Visible = false;
+                viewer.BackgroundImage = null;
+            }
+            else
+            {
+                viewer.Visible = true;
+                viewer.BackgroundImage = System.Drawing.Image.FromFile(view.wallpaper.Path);
+            }
+        }
+
+        private WallpaperView selectedView = null;
+        private void WallpaperView_MouseClick(object sender, MouseEventArgs e)
+        {
+            selectView((WallpaperView)sender);
+        }
+
+        private void selectView(WallpaperView view)
+        {
+            if (selectedView != null)
+            {
+                selectedView.deselect();
+            }
+            if (view != null)
+            {
+                if (view.wallpaper.Exists)
+                {
+                    view.Focus();
+                    view.select();
+                }
+                else
+                {
+                    view = null;
+                }
+            }
+            selectedView = view;
         }
 
         private void setTitle(string p) {
@@ -142,6 +192,11 @@ namespace WindowsSlideshowWallpaperUtilForms {
             } else {
                 button4.Text = "Unused Thumbnails are not Deleted";
             }
+        }
+
+        private void viewer_Click(object sender, EventArgs e)
+        {
+            ShowView(null);
         }
     }
 }

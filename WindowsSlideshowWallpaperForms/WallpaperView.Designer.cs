@@ -55,6 +55,7 @@
             this.label2.Size = new System.Drawing.Size(309, 13);
             this.label2.TabIndex = 8;
             this.label2.Text = "label2";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label3
             // 
@@ -187,7 +188,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.BackColor = System.Drawing.Color.DarkGray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.Controls.Add(this.lblSize);
             this.Controls.Add(this.lblDimensions);
@@ -205,7 +206,6 @@
             this.Name = "WallpaperView";
             this.Padding = new System.Windows.Forms.Padding(5);
             this.Size = new System.Drawing.Size(325, 185);
-            this.DoubleClick += new System.EventHandler(this.WallpaperView_DoubleClick);
             this.ResumeLayout(false);
             this.PerformLayout();
 

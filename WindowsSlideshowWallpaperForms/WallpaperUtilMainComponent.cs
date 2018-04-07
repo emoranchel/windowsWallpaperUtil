@@ -29,7 +29,7 @@ namespace WindowsSlideshowWallpaperUtilForms {
             notifyIcon1.DoubleClick += new EventHandler(notifyIcon1_Click);
             appContext.ThreadExit += new EventHandler(appContext_ThreadExit);
             timer1.Start();
-            //showWindow();
+            showWindow();
         }
 
         void form_FormClosing(object sender, FormClosingEventArgs e) {

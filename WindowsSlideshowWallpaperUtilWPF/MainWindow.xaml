@@ -136,7 +136,7 @@
             </Grid.RowDefinitions>
             <Button Grid.Row="0" Grid.Column="0" FontFamily="Segoe UI" FontSize="25" Content="Purge Deleted Wallpapers" Click="Button_Click_3">
             </Button>
-            <Button Grid.Row="1" Grid.Column="0" FontFamily="Segoe UI" FontSize="25" Content="Enable WinForms View" Click="Button_Click_2">
+            <Button Grid.Row="1" Grid.Column="0" FontFamily="Segoe UI" FontSize="25" Content="Use WinForms View (Old)" Click="Button_Click_2">
             </Button>
             <Button Grid.Row="2" Grid.Column="0" FontFamily="Segoe UI" FontSize="25" Content="Delete Unused Thumbnails" Click="Button_Click" x:Name="ThumbButton">
             </Button>
